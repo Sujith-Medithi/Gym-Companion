@@ -131,13 +131,13 @@ const Sidebar = ({ isOpen, onClose }) => {
           fixed top-0 left-0 z-50 flex flex-col border-r border-subtle
           bg-surface shadow-2xl transition-all duration-300 ease-in-out select-none
           h-full md:sticky md:top-0 md:h-screen md:translate-x-0 md:rounded-none md:border-r md:border-subtle
-          ${isExpanded ? 'md:w-72' : 'md:w-20'}
-          ${isOpen ? 'translate-x-0 w-72' : '-translate-x-full w-72'}
+          ${isExpanded ? 'md:w-60' : 'md:w-20'}
+          ${isOpen ? 'translate-x-0 w-60' : '-translate-x-full w-60'}
         `}
       >
         {/* Brand Header */}
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-subtle px-4">
-          <div className="flex items-center gap-3">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-subtle px-3.5">
+          <div className="flex items-center gap-2.5">
             {/* Logo Icon */}
             <div
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-sm"
