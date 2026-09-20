@@ -1,6 +1,6 @@
-# 🏋️ AI Gym Trainer
+# 🏋️ Gym Companion
 
-> An AI-powered personal fitness assistant featuring real-time computer vision pose detection, automatic repetition counting, posture correction alerts, voice audio feedback, daily habit tracking, and comprehensive progress analytics.
+> An AI-powered personal fitness companion featuring real-time computer vision pose detection, automatic repetition counting, posture correction alerts, voice audio feedback, daily habit tracking, and comprehensive progress analytics.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![React](https://img.shields.io/badge/React-19.0-61DAFB?logo=react&logoColor=black)
@@ -15,33 +15,41 @@
 
 ## 📌 Overview
 
-**AI Gym Trainer** is a full-stack web application designed to help users perform exercises with proper form, stay consistent with workout routines, track daily habits, and visualize overall fitness progress. Using MediaPipe Pose detection directly in the browser via your webcam, AI Gym Trainer monitors joint angles, counts exercise repetitions automatically, detects improper posture in real-time, and provides immediate audio feedback.
+**Gym Companion** is a full-stack fitness application designed to help users perform exercises with proper form, maintain consistency with workout routines, track daily habits, and visualize long-term fitness progress. Using MediaPipe Pose detection directly in the browser via your webcam, Gym Companion monitors joint angles, counts exercise repetitions automatically, detects improper posture in real-time, and provides immediate voice audio feedback.
 
 ---
 
 ## ✨ Key Features
 
 ### 📷 1. Real-Time Computer Vision & Pose Detection
-- **MediaPipe Pose Integration**: Leverages browser-based pose estimation for low-latency joint tracking without uploading video feeds to any cloud server.
-- **Automatic Repetition Counting**: Dynamically calculates key joint angles (e.g., knees, elbows) to detect repetition cycles for squats, push-ups, bicep curls, and isometric holds (e.g., plank timer).
-- **Live Form Warnings**: Analyzes biomechanical geometry to flag improper posture (e.g., knees caving in during squats, inadequate depth, curved back during planks).
+- **MediaPipe Pose Integration**: Browser-based pose estimation for low-latency joint tracking with zero video uploads to any cloud server (100% private).
+- **Automatic Repetition Counting**: Dynamically calculates key biomechanical joint angles (knees, hips, elbows) to detect repetition cycles for squats, push-ups, bicep curls, and isometric holds (plank timer).
+- **Live Form Warnings**: Analyzes posture geometry in real time to flag errors (e.g., knees caving inward during squats, inadequate squat depth, back curvature during planks).
 - **Voice Feedback (Web Speech API)**: Spoken audio alerts notify you of form corrections in real time during active workout sessions.
 
 ### 📊 2. Performance Analytics & Progress Dashboard
-- **Visual Performance Trends**: Charts powered by `Chart.js` track completed workouts, total volume, duration, and estimated calories burned.
+- **Visual Performance Trends**: Interactive charts powered by `Chart.js` track completed workouts, total volume, duration, and estimated calories burned.
 - **Streak & Consistency Metrics**: Track current workout streaks, weekly activity rings, and historical completion patterns.
 - **Body Metrics Tracking**: Record weight, body fat %, and strength milestones over time.
 
 ### 🗓️ 3. Daily Habit Tracker
 - **Habit Formation**: Build custom daily habits (e.g., hydration, stretching, sleep targets, protein intake).
-- **Streak Counter & Status Toggles**: Easily check off daily habits and track current completion streaks.
+- **Streak Counter & Status Toggles**: Check off daily habits and track current completion streaks.
 
 ### 🔒 4. Authentication & User Security
 - **Secure Token Auth**: JWT (JSON Web Tokens) with HTTP-Only cookie support and password hashing via `bcryptjs`.
+- **Google OAuth**: Fast single sign-on integration via `@react-oauth/google`.
 - **Protected Routes & User Profiles**: Personal stats, workouts, habits, and preferences are isolated per user.
 
-### 📱 5. Modern UI / UX & PWA Support
-- **Responsive Dark/Light Theme**: Built with React 19, Tailwind CSS v4, and dynamic layout components.
+### 📝 5. Production-Ready Backend Logging System
+- **Winston & Daily File Rotation**: Dual transports logging to colorized console in development and rotating files in `logs/` (`app-%DATE%.log` and `error-%DATE%.log`) with 14-day retention and 10MB file caps.
+- **Request Tracing Middleware**: Traces every incoming HTTP request with duration (`ms`), status code, IP, user ID, route, and sanitized parameters.
+- **Sensitive Data Redaction**: Automatically scrubs passwords, tokens, cookies, secrets, and API keys before writing to logs.
+- **Global Error Handling**: Production error middleware and process-level monitors capturing uncaught exceptions and rejections with full stack traces.
+
+### 📱 6. Modern UI / UX & PWA Support
+- **Responsive Dark/Light Theme**: Built with React 19, Tailwind CSS v4, and custom design tokens.
+- **Sleek Retractable Sidebar**: Space-optimized 240px (`w-60`) navigation with pin state and smooth hover expansion.
 - **Progressive Web App (PWA)**: Installable on mobile and desktop devices with offline caching capabilities (`vite-plugin-pwa`).
 
 ---
@@ -54,13 +62,15 @@
 - **Computer Vision & Math**: MediaPipe Pose (`@mediapipe/pose`), Custom Pose Geometry Engine
 - **Data Visualization**: Chart.js, `react-chartjs-2`
 - **PWA & Audio**: `vite-plugin-pwa`, Web Speech Synthesis API
+- **Auth**: `@react-oauth/google`
 
 ### Backend (`/server` & `/api`)
 - **Runtime**: Node.js (ES Modules)
 - **Framework**: Express.js 4
-- **Database**: MongoDB with Mongoose ODM
-- **Authentication**: JSON Web Tokens (`jsonwebtoken`), `bcryptjs`, `cookie-parser`
-- **Security**: CORS origin whitelist, security headers (`X-Frame-Options`, `nosniff`, `XSS-Protection`), request payload body limits
+- **Database**: MongoDB with Mongoose 8 ODM
+- **Logging**: Winston 3, `winston-daily-rotate-file`
+- **Authentication**: JSON Web Tokens (`jsonwebtoken`), `bcryptjs`, `cookie-parser`, Google Auth Library
+- **Security**: CORS origin whitelist, security headers (`X-Frame-Options`, `nosniff`, `XSS-Protection`), request body size limits
 - **Serverless**: Ready for Vercel Serverless Functions (`/api/index.js`)
 
 ---
@@ -68,28 +78,31 @@
 ## 📁 Project Architecture
 
 ```
-AI-Gym-Trainer/
+Gym-Companion/
 ├── api/                       # Vercel serverless function entrypoint
-│   └── index.js               # Express app adapter for Vercel backend deployment
+│   └── index.js               # Express app adapter for Vercel deployment
 ├── client/                    # React Frontend (Vite + Tailwind CSS v4)
 │   ├── public/                # Static assets & PWA manifest
 │   ├── src/
-│   │   ├── components/        # Reusable UI components & layouts (Nav, Sidebar, ProtectedRoute)
+│   │   ├── components/        # UI components & layouts (Nav, Sidebar, ProtectedRoute)
 │   │   ├── context/           # React Context (AuthContext, WorkoutContext, HabitContext)
 │   │   ├── hooks/             # Custom hooks (usePoseDetection, etc.)
 │   │   ├── pages/             # App pages (Dashboard, Workouts, Habits, Progress, Settings)
-│   │   ├── services/          # Axios API service modules
+│   │   ├── routes/            # App routing definitions (AppRoutes.jsx)
+│   │   ├── services/          # Axios API client modules
 │   │   └── utils/             # Pose geometry, posture checker, notification manager
 │   ├── package.json
 │   ├── vercel.json            # Vercel frontend rewrite configuration
 │   └── vite.config.js         # Vite configuration with PWA plugin
+├── logs/                      # Backend log files (git-ignored, auto-rotated)
 └── server/                    # Node.js + Express Backend API
-    ├── config/                # Database connection setup
+    ├── config/                # Database connection setup (MongoDB)
     ├── controllers/           # Route logic handlers (Auth, Workout, Habit)
-    ├── middleware/            # JWT authentication middleware
+    ├── middleware/            # Auth & Winston request logging middleware
     ├── models/                # Mongoose Schema definitions (User, Workout, Habit)
     ├── routes/                # API router endpoints
-    ├── server.js              # Standalone Express server setup
+    ├── utils/                 # Winston logger service & sensitive data sanitizer
+    ├── server.js              # Standalone Express server & global error handlers
     ├── package.json
     └── vercel.json            # Vercel backend rewrite configuration
 ```
@@ -110,8 +123,8 @@ Make sure you have the following installed on your system:
 
 #### 1. Clone the Repository
 ```bash
-git clone https://github.com/Sujith-Medithi/AI-Gym-Trainer.git
-cd AI-Gym-Trainer
+git clone https://github.com/Sujith-Medithi/Gym-Companion.git
+cd Gym-Companion
 ```
 
 #### 2. Configure Backend (`/server`)
@@ -128,6 +141,7 @@ MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_key
 JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173
+LOG_LEVEL=info
 ```
 
 Start the backend server in development mode:
@@ -167,6 +181,7 @@ npm run dev
 | `JWT_SECRET` | Secret key used for signing JWT tokens | `your_secret_key` |
 | `JWT_EXPIRES_IN` | Validity period for authentication tokens | `7d` |
 | `CLIENT_URL` | Frontend client origin URL for CORS policy | `http://localhost:5173` |
+| `LOG_LEVEL` | Minimum logging level (`error`, `warn`, `info`, `http`, `debug`) | `info` |
 
 ### Frontend (`/client/.env`)
 | Variable | Description | Default / Example |
@@ -180,6 +195,7 @@ npm run dev
 ### Authentication Routes (`/api/auth`)
 - `POST /api/auth/register` - Create a new user account
 - `POST /api/auth/login` - Authenticate user and issue JWT cookie/token
+- `POST /api/auth/google` - Authenticate via Google OAuth
 - `POST /api/auth/logout` - Clear user session and cookies
 - `GET  /api/auth/me` - Retrieve authenticated user profile *(Protected)*
 - `PUT  /api/auth/settings` - Update user preferences & targets *(Protected)*
@@ -205,12 +221,13 @@ npm run dev
 ### Deploying to Vercel
 
 #### Backend Deployment
-1. Import the `/server` folder or target repository root into Vercel.
-2. In Vercel Project Settings, add the required Environment Variables:
+1. Import the target repository root into Vercel.
+2. In Vercel Project Settings, configure root directory or serverless rewrites and add Environment Variables:
    - `MONGO_URI`
    - `JWT_SECRET`
    - `CLIENT_URL` (URL of deployed frontend)
    - `NODE_ENV=production`
+   - `LOG_LEVEL=info`
 
 #### Frontend Deployment
 1. Import the `/client` folder as a separate Vercel project.
