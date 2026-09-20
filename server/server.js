@@ -20,12 +20,19 @@ app.set('trust proxy', 1);
 // Security & Header Configuration
 app.disable('x-powered-by');
 
-// Dynamic CORS Policy (supports multiple origins and strips trailing slashes)
-const rawClientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-const allowedOrigins = rawClientUrl
-  .split(',')
-  .map((url) => url.trim().replace(/\/$/, ''))
-  .filter(Boolean);
+// Dynamic CORS Policy (supports multiple origins, Vercel preview domains, and strips trailing slashes)
+const rawClientUrl = process.env.CLIENT_URL || 'https://gym-companion-tau.vercel.app';
+const allowedOrigins = [
+  'https://gym-companion-tau.vercel.app',
+  'https://gym-companion.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000',
+  ...rawClientUrl
+    .split(',')
+    .map((url) => url.trim().replace(/\/$/, ''))
+    .filter(Boolean),
+];
 
 app.use(
   cors({
@@ -33,11 +40,14 @@ app.use(
       // Allow requests with no origin (e.g. mobile apps, Postman)
       if (!origin) return callback(null, true);
       
-      const isAllowed = allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production';
+      const isAllowed = 
+        allowedOrigins.includes(origin) || 
+        origin.endsWith('.vercel.app') || 
+        process.env.NODE_ENV !== 'production';
+        
       if (isAllowed) {
         callback(null, origin);
       } else {
-        // Fallback to allow origin for flexible deployments
         callback(null, origin);
       }
     },

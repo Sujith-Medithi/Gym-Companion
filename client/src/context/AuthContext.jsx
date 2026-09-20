@@ -56,6 +56,7 @@ export const AuthProvider = ({ children }) => {
         applySettingsHelper(data.user);
       } catch {
         setUser(null);
+        localStorage.removeItem('auth_token');
       } finally {
         setLoading(false);
       }
@@ -68,6 +69,9 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const { data } = await registerUser({ name, email, password });
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token);
+      }
       setUser(data.user);
       applySettingsHelper(data.user);
       return data;
@@ -82,6 +86,9 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const { data } = await loginUser({ email, password });
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token);
+      }
       setUser(data.user);
       applySettingsHelper(data.user);
       return data;
@@ -96,6 +103,9 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const { data } = await loginWithGoogleApi(credential);
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token);
+      }
       setUser(data.user);
       applySettingsHelper(data.user);
       return data;
@@ -114,6 +124,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setUser(null);
       setError(null);
+      localStorage.removeItem('auth_token');
 
       // Reset theme and stop reminders
       document.documentElement.setAttribute('data-theme', 'dark');
@@ -137,7 +148,9 @@ export const AuthProvider = ({ children }) => {
       throw new Error(message);
     } finally {
       setUser(null);
+      localStorage.removeItem('auth_token');
       document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
       localStorage.removeItem('notificationsEnabled');
       localStorage.removeItem('workoutReminderEnabled');
       localStorage.removeItem('waterReminderEnabled');
@@ -157,7 +170,9 @@ export const AuthProvider = ({ children }) => {
       throw new Error(message);
     } finally {
       setUser(null);
+      localStorage.removeItem('auth_token');
       document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
       localStorage.removeItem('notificationsEnabled');
       localStorage.removeItem('workoutReminderEnabled');
       localStorage.removeItem('waterReminderEnabled');

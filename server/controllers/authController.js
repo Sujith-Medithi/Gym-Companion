@@ -19,7 +19,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   });
 
-  const isProd = process.env.NODE_ENV === 'production';
+  const isProd = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
 
   const cookieOptions = {
     httpOnly: true,
@@ -33,6 +33,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie('token', token, cookieOptions)
     .json({
       success: true,
+      token,
       user: {
         _id: user._id,
         name: user.name,
@@ -147,7 +148,7 @@ export const login = async (req, res) => {
  * @access  Public
  */
 export const logout = (_req, res) => {
-  const isProd = process.env.NODE_ENV === 'production';
+  const isProd = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
   res
     .status(200)
     .cookie('token', '', {
