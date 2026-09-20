@@ -1,6 +1,6 @@
 # 🏋️ Gym Companion
 
-> An AI-powered personal fitness companion featuring real-time computer vision pose detection, automatic repetition counting, posture correction alerts, voice audio feedback, daily habit tracking, and comprehensive progress analytics.
+> A personal fitness companion featuring real-time computer vision pose detection, automatic repetition counting, posture correction alerts, voice audio feedback, daily habit tracking, and comprehensive progress analytics.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![React](https://img.shields.io/badge/React-19.0-61DAFB?logo=react&logoColor=black)
