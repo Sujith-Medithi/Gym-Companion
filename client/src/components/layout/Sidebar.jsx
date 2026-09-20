@@ -55,15 +55,27 @@ const Sidebar = ({ isOpen, onClose }) => {
   const [showInstallModal, setShowInstallModal] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
 
-  // Persistent Retract State for Desktop Sidebar
-  const [isRetracted, setIsRetracted] = useState(() => {
-    return localStorage.getItem('ai_gym_sidebar_retracted') === 'true';
+  // Persistent Pin State for Desktop Sidebar (true = pinned open, false = minimized)
+  const [isPinned, setIsPinned] = useState(() => {
+    const saved = localStorage.getItem('gym_sidebar_pinned');
+    if (saved !== null) return saved === 'true';
+    return localStorage.getItem('ai_gym_sidebar_retracted') !== 'true';
   });
 
-  const toggleRetract = () => {
-    setIsRetracted((prev) => {
+  // Transient hover state for minimized sidebar
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Expanded whenever pinned OR temporarily hovered
+  const isExpanded = isPinned || isHovered;
+
+  const handleTogglePin = (e) => {
+    e.stopPropagation();
+    setIsPinned((prev) => {
       const next = !prev;
-      localStorage.setItem('ai_gym_sidebar_retracted', String(next));
+      localStorage.setItem('gym_sidebar_pinned', String(next));
+      if (!next) {
+        setIsHovered(false);
+      }
       return next;
     });
   };
@@ -107,19 +119,25 @@ const Sidebar = ({ isOpen, onClose }) => {
         />
       )}
 
-      {/* Retractable Sidebar container */}
+      {/* Retractable Sidebar container with hover-expand */}
       <aside
+        onMouseEnter={() => {
+          if (!isPinned) setIsHovered(true);
+        }}
+        onMouseLeave={() => {
+          if (!isPinned) setIsHovered(false);
+        }}
         className={`
-            fixed top-0 left-0 z-50 flex h-full flex-col border-r border-subtle
-            bg-surface shadow-2xl transition-all duration-300 ease-in-out select-none
-            md:static md:translate-x-0 md:rounded-none md:border-r md:border-subtle
-          ${isRetracted ? 'md:w-20' : 'md:w-64'}
+          fixed top-0 left-0 z-50 flex flex-col border-r border-subtle
+          bg-surface shadow-2xl transition-all duration-300 ease-in-out select-none
+          h-full md:sticky md:top-0 md:h-screen md:translate-x-0 md:rounded-none md:border-r md:border-subtle
+          ${isExpanded ? 'md:w-64' : 'md:w-20'}
           ${isOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64'}
         `}
       >
         {/* Brand Header */}
-        <div className="flex h-16 items-center justify-between border-b border-subtle px-4">
-          <div className="flex items-center gap-3">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-subtle px-4">
+          <div className="flex items-center gap-3 min-w-0">
             {/* Logo Icon */}
             <div
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-sm"
@@ -129,9 +147,9 @@ const Sidebar = ({ isOpen, onClose }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
               </svg>
             </div>
-            {!isRetracted && (
+            {isExpanded && (
               <span
-                className="text-base font-bold tracking-wide uppercase animate-fadeIn"
+                className="text-base font-bold tracking-wide uppercase animate-fadeIn truncate"
                 style={{
                   color: 'var(--text-primary)'
                 }}
@@ -141,23 +159,25 @@ const Sidebar = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* Retract Toggle Button (Desktop/Tablet) */}
-          <button
-            onClick={toggleRetract}
-            className="hidden md:flex rounded-xl p-2 text-slate-400 hover:bg-white/5 hover:text-white transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#6366F1] focus:outline-none"
-            title={isRetracted ? 'Expand Sidebar' : 'Retract Sidebar'}
-            aria-label={isRetracted ? 'Expand Sidebar' : 'Retract Sidebar'}
-          >
-            <svg
-              className={`h-5 w-5 transform transition-transform duration-300 ${isRetracted ? 'rotate-180' : ''}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+          {/* Retract/Pin Toggle Button: hidden when minimized, visible when expanded/hovered */}
+          {isExpanded && (
+            <button
+              onClick={handleTogglePin}
+              className="hidden md:flex rounded-xl p-2 text-slate-400 hover:bg-white/5 hover:text-white transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#6366F1] focus:outline-none animate-fadeIn"
+              title={isPinned ? 'Minimize Sidebar' : 'Pin Sidebar Maximized'}
+              aria-label={isPinned ? 'Minimize Sidebar' : 'Pin Sidebar Maximized'}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
-            </svg>
-          </button>
+              <svg
+                className={`h-5 w-5 transform transition-transform duration-300 ${!isPinned ? 'rotate-180 text-primary' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+              </svg>
+            </button>
+          )}
 
           {/* Close button (mobile only) */}
           <button
@@ -172,19 +192,21 @@ const Sidebar = ({ isOpen, onClose }) => {
         </div>
 
         {/* Navigation List */}
-        <nav className="flex-1 space-y-1.5 overflow-y-auto px-3 py-6 mb-6">
+        <nav className="flex-1 space-y-1.5 overflow-y-auto px-3 py-4">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.to === '/'}
               onClick={onClose}
-              title={isRetracted ? item.label : undefined}
+              title={!isExpanded ? item.label : undefined}
               className={({ isActive }) =>
-                `group relative flex items-center h-11 rounded-xl transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus:outline-none ${isRetracted ? 'justify-center p-0' : 'px-4 py-2.5 gap-3.5'
-                } ${isActive
-                  ? 'font-semibold bg-[var(--primary-light)]'
-                  : 'font-medium hover:bg-[var(--bg-card-hover)]'
+                `group relative flex items-center h-11 rounded-xl transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus:outline-none ${
+                  !isExpanded ? 'justify-center p-0' : 'px-4 py-2.5 gap-3.5'
+                } ${
+                  isActive
+                    ? 'font-semibold bg-[var(--primary-light)]'
+                    : 'font-medium hover:bg-[var(--bg-card-hover)]'
                 }`
               }
             >
@@ -207,7 +229,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                   </span>
 
                   {/* Text Label */}
-                  {!isRetracted && (
+                  {isExpanded && (
                     <span
                       className="truncate text-sm tracking-wide animate-fadeIn"
                       style={{ color: isActive ? 'var(--primary)' : 'var(--text-secondary)' }}
@@ -221,14 +243,15 @@ const Sidebar = ({ isOpen, onClose }) => {
           ))}
         </nav>
 
-        {/* Install Application Callout */}
+        {/* Install Application Callout — Anchored to bottom of sidebar */}
         {!isStandalone && (
-          <div className="px-3 pb-3">
+          <div className="mt-auto shrink-0 border-t border-subtle p-3">
             <button
               onClick={handleInstallClick}
-              title={isRetracted ? 'Install Trainer App' : undefined}
-              className={`w-full flex items-center rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus:outline-none ${isRetracted ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5'
-                }`}
+              title={!isExpanded ? 'Install Gym Companion' : undefined}
+              className={`w-full flex items-center rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus:outline-none ${
+                !isExpanded ? 'justify-center p-2.5' : 'gap-3 px-3 py-2.5'
+              }`}
               style={{ color: 'var(--text-secondary)' }}
               onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--bg-card-hover)'}
               onMouseLeave={e => e.currentTarget.style.backgroundColor = ''}
@@ -238,13 +261,10 @@ const Sidebar = ({ isOpen, onClose }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                 </svg>
               </span>
-              {!isRetracted && <span className="truncate text-sm animate-fadeIn">Install App</span>}
+              {isExpanded && <span className="truncate text-sm animate-fadeIn">Install App</span>}
             </button>
           </div>
         )}
-
-        {/* Bottom border — replaces motivational widget */}
-        <div className="border-t px-3 py-3" style={{ borderColor: 'var(--border-subtle)' }} />
       </aside>
 
       {/* PWA Installation Instructions Modal */}
