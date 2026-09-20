@@ -148,18 +148,12 @@ const Sidebar = ({ isOpen, onClose }) => {
               </svg>
             </div>
             {isExpanded && (
-              <div className="flex flex-col animate-fadeIn">
+              <div className="flex items-center animate-fadeIn">
                 <span
                   className="text-[15px] font-bold tracking-tight leading-tight whitespace-nowrap"
                   style={{ color: 'var(--text-primary)' }}
                 >
-                  Gym <span style={{ color: 'var(--primary)' }}>Companion</span>
-                </span>
-                <span 
-                  className="text-[10px] font-semibold tracking-wider uppercase"
-                  style={{ color: 'var(--text-muted)' }}
-                >
-                  AI Fitness
+                  Gym Companion
                 </span>
               </div>
             )}
