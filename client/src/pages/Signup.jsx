@@ -78,7 +78,7 @@ const Signup = () => {
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-            Join <span className="text-primary">AI Gym</span>
+            Join <span className="text-primary">Gym Companion</span>
           </h1>
           <p className="mt-3 text-sm text-[#A5B4FC] font-medium">
             Create an account to start your fitness journey
