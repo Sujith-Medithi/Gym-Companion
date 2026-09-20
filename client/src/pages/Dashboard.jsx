@@ -254,18 +254,12 @@ const Dashboard = () => {
                 <circle cx="24" cy="24" r="20" fill="none" strokeWidth="3.5" style={{ stroke: 'var(--border-default)' }} />
                 <circle
                   cx="24" cy="24" r="20" fill="none"
-                  stroke="url(#dashGrad)" strokeWidth="3.5"
+                  stroke="var(--primary)" strokeWidth="3.5"
                   strokeLinecap="round"
                   strokeDasharray={`${2 * Math.PI * 20}`}
                   strokeDashoffset={`${2 * Math.PI * 20 * (1 - todaysProgress / 100)}`}
                   className="transition-all duration-700"
                 />
-                <defs>
-                  <linearGradient id="dashGrad" x1="0%" y1="0%" x2="100%">
-                    <stop offset="0%" stopColor="var(--gradient-start)" />
-                    <stop offset="100%" stopColor="var(--gradient-end)" />
-                  </linearGradient>
-                </defs>
               </svg>
               <span className="absolute text-[10px] font-bold" style={{ color: 'var(--primary)' }}>{todaysProgress}%</span>
             </div>

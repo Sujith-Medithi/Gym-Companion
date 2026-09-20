@@ -64,9 +64,7 @@ const Login = () => {
       <div className="w-full max-w-md animate-fadeIn">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1
-            className="text-4xl font-extrabold tracking-tight sm:text-5xl bg-gradient-to-r from-white to-[#94BEDE] bg-clip-text text-transparent"
-          >
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl text-white">
             Welcome Back
           </h1>
           <p className="mt-3 text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>

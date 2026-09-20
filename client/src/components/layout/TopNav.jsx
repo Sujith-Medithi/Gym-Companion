@@ -72,8 +72,8 @@ const TopNav = ({ onMenuToggle }) => {
   };
 
   return (
-    <header className="sticky top-0 z-30 h-16 px-6 lg:px-8 border-b border-subtle bg-surface/90 backdrop-blur-md flex items-center justify-between">
-      <div className="w-full max-w-[1440px] flex items-center justify-between">
+    <header className="sticky top-0 z-30 h-16 px-6 sm:px-8 border-b border-subtle bg-surface/90 backdrop-blur-md flex items-center justify-between">
+      <div className="w-full max-w-7xl flex items-center justify-between">
         {/* Left: Menu toggle / retract chevron + page title */}
         <div className="flex items-center gap-3">
           <button

@@ -131,17 +131,16 @@ const Sidebar = ({ isOpen, onClose }) => {
           fixed top-0 left-0 z-50 flex flex-col border-r border-subtle
           bg-surface shadow-2xl transition-all duration-300 ease-in-out select-none
           h-full md:sticky md:top-0 md:h-screen md:translate-x-0 md:rounded-none md:border-r md:border-subtle
-          ${isExpanded ? 'md:w-64' : 'md:w-20'}
-          ${isOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64'}
+          ${isExpanded ? 'md:w-72' : 'md:w-20'}
+          ${isOpen ? 'translate-x-0 w-72' : '-translate-x-full w-72'}
         `}
       >
         {/* Brand Header */}
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-subtle px-4">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-3">
             {/* Logo Icon */}
             <div
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-sm"
-              style={{ background: 'linear-gradient(135deg, var(--gradient-start), var(--gradient-end))' }}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-sm bg-primary text-white"
             >
               <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
@@ -149,7 +148,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             </div>
             {isExpanded && (
               <span
-                className="text-base font-bold tracking-wide uppercase animate-fadeIn truncate"
+                className="text-[15px] font-bold tracking-wide uppercase animate-fadeIn whitespace-nowrap"
                 style={{
                   color: 'var(--text-primary)'
                 }}

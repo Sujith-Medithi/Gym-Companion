@@ -43,8 +43,8 @@
   --primary:        #818CF8;
   --primary-hover:  #6366F1;
   --primary-light:  #1E1B4B;
-  --gradient-start: #6366F1;
-  --gradient-end:   #EC4899;
+  --gradient-start: #818CF8;
+  --gradient-end:   #6366F1;
 
   /* Text */
   --text-primary:   #F8FAFC;
@@ -85,7 +85,7 @@
   --primary-hover:  #4338CA;
   --primary-light:  #EEF2FF;
   --gradient-start: #4F46E5;
-  --gradient-end:   #DB2777;
+  --gradient-end:   #4338CA;
 
   --text-primary:   #111827;
   --text-secondary: #64748B;
@@ -141,20 +141,23 @@ body {
 ::-webkit-scrollbar-thumb  { background: var(--border-default); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-/* ─── Primary CTA Button — gradient, used SPARINGLY ────── */
+/* ─── Primary CTA Button — Solid simple color ────── */
 .btn-primary-gradient {
-  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+  background-color: var(--primary);
   color: #ffffff;
   font-weight: 600;
-  transition: opacity 160ms ease-out, transform 120ms ease-out;
+  transition: background-color 160ms ease-out, transform 120ms ease-out, opacity 160ms ease-out;
 }
-.btn-primary-gradient:hover:not(:disabled) { opacity: 0.90; }
+.btn-primary-gradient:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  opacity: 0.95;
+}
 .btn-primary-gradient:active:not(:disabled) { transform: scale(0.98); }
 .btn-primary-gradient:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Progress bar gradient fill */
+/* Progress bar solid fill */
 .progress-gradient {
-  background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+  background-color: var(--primary);
 }
 
 /* ─── Animations ─────────────────────────────────────────── */
