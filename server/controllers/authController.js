@@ -6,6 +6,7 @@ import Workout from '../models/Workout.js';
 import Habit from '../models/Habit.js';
 import { OAuth2Client } from 'google-auth-library';
 import { sendEmail } from '../utils/email.js';
+import { logger } from '../utils/logger.js';
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '951810059300-9ospsbqndvtqi85h4ji54kg1k3c630s7.apps.googleusercontent.com';
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
@@ -87,20 +88,23 @@ export const register = async (req, res) => {
     if (user) {
       if (user.password) {
         // Already has a password
+        logger.warn(`Registration rejected — email already registered: ${email}`);
         return res.status(400).json({ message: 'An account with this email already exists' });
       }
       // Link account: add password to existing Google-only user
       user.password = password;
       user.name = name; // Optionally update name
       await user.save(); // pre-save hook will hash the password
+      logger.info(`Account linked with password for user: ${user.email}`, { userId: user._id });
     } else {
       // Create user (password is hashed via pre-save hook)
       user = await User.create({ name, email, password });
+      logger.info(`New user registered successfully: ${user.email}`, { userId: user._id });
     }
 
     sendTokenResponse(user, 201, res);
   } catch (error) {
-    console.error('Register error:', error);
+    logger.error(`Register error: ${error.message}`, { stack: error.stack });
     res.status(500).json({ message: 'Server error — please try again later' });
   }
 };
@@ -126,18 +130,21 @@ export const login = async (req, res) => {
     // Find user and explicitly include password for comparison
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
+      logger.warn(`Login failed — user not found: ${email}`);
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     // Compare passwords
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+      logger.warn(`Login failed — invalid password attempt for: ${email}`, { userId: user._id });
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
+    logger.info(`User logged in successfully: ${user.email}`, { userId: user._id });
     sendTokenResponse(user, 200, res);
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error(`Login error: ${error.message}`, { stack: error.stack });
     res.status(500).json({ message: 'Server error — please try again later' });
   }
 };
@@ -147,8 +154,9 @@ export const login = async (req, res) => {
  * @desc    Logout user (clear cookie)
  * @access  Public
  */
-export const logout = (_req, res) => {
+export const logout = (req, res) => {
   const isProd = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+  logger.info('User logged out', { userId: req.user?.id || 'session' });
   res
     .status(200)
     .cookie('token', '', {
@@ -186,17 +194,19 @@ export const googleAuth = async (req, res) => {
         user.googleId = googleId;
         await user.save();
       }
+      logger.info(`Google authentication success for existing user: ${email}`, { userId: user._id, googleId });
     } else {
       user = await User.create({
         googleId,
         email,
         name,
       });
+      logger.info(`Google authentication success for new user: ${email}`, { userId: user._id, googleId });
     }
 
     sendTokenResponse(user, 200, res);
   } catch (error) {
-    console.error('Google Auth error:', error);
+    logger.error(`Google Auth error: ${error.message}`, { stack: error.stack });
     res.status(500).json({ message: 'Google Authentication failed' });
   }
 };

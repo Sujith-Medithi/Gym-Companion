@@ -17,7 +17,9 @@
     "google-auth-library": "^11.0.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.9.5",
-    "nodemailer": "^9.0.6"
+    "nodemailer": "^9.0.6",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

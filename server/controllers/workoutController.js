@@ -1,4 +1,5 @@
 import Workout from '../models/Workout.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * @route   GET /api/workouts
@@ -48,9 +49,17 @@ export const createWorkout = async (req, res) => {
       completedDates: completedDates || [],
     });
 
+    logger.info(`Workout created: ${workout.exerciseName}`, {
+      workoutId: workout._id,
+      userId: req.user.id,
+      exerciseName: workout.exerciseName,
+      duration: workout.duration,
+      totalReps: workout.totalReps,
+    });
+
     res.status(201).json({ success: true, workout });
   } catch (error) {
-    console.error('Create workout error:', error);
+    logger.error('Create workout error:', { error: error.message, stack: error.stack, userId: req.user?.id });
     res.status(500).json({ message: 'Server error creating workout session' });
   }
 };
@@ -96,9 +105,15 @@ export const updateWorkout = async (req, res) => {
       return res.status(404).json({ message: 'Workout session not found or unauthorized' });
     }
 
+    logger.info(`Workout updated: ${workout.exerciseName}`, {
+      workoutId: workout._id,
+      userId: req.user.id,
+      exerciseName: workout.exerciseName,
+    });
+
     res.status(200).json({ success: true, workout });
   } catch (error) {
-    console.error('Update workout error:', error);
+    logger.error('Update workout error:', { error: error.message, stack: error.stack, userId: req.user?.id });
     res.status(500).json({ message: 'Server error updating workout session' });
   }
 };
@@ -116,9 +131,14 @@ export const deleteWorkout = async (req, res) => {
       return res.status(404).json({ message: 'Workout session not found or unauthorized' });
     }
 
+    logger.info(`Workout deleted: ${workout.exerciseName || req.params.id}`, {
+      workoutId: req.params.id,
+      userId: req.user.id,
+    });
+
     res.status(200).json({ success: true, message: 'Workout session deleted successfully' });
   } catch (error) {
-    console.error('Delete workout error:', error);
+    logger.error('Delete workout error:', { error: error.message, stack: error.stack, userId: req.user?.id });
     res.status(500).json({ message: 'Server error deleting workout session' });
   }
 };

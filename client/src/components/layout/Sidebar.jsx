@@ -140,34 +140,53 @@ const Sidebar = ({ isOpen, onClose }) => {
           <div className="flex items-center gap-3">
             {/* Logo Icon */}
             <div
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-sm bg-primary text-white"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl shadow-sm"
+              style={{ backgroundColor: 'var(--primary)' }}
             >
-              <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#FFFFFF" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
               </svg>
             </div>
             {isExpanded && (
-              <span
-                className="text-[15px] font-bold tracking-wide uppercase animate-fadeIn whitespace-nowrap"
-                style={{
-                  color: 'var(--text-primary)'
-                }}
-              >
-                Gym Companion
-              </span>
+              <div className="flex flex-col animate-fadeIn">
+                <span
+                  className="text-[15px] font-bold tracking-tight leading-tight whitespace-nowrap"
+                  style={{ color: 'var(--text-primary)' }}
+                >
+                  Gym <span style={{ color: 'var(--primary)' }}>Companion</span>
+                </span>
+                <span 
+                  className="text-[10px] font-semibold tracking-wider uppercase"
+                  style={{ color: 'var(--text-muted)' }}
+                >
+                  AI Fitness
+                </span>
+              </div>
             )}
           </div>
 
-          {/* Retract/Pin Toggle Button: hidden when minimized, visible when expanded/hovered */}
+          {/* Retract/Pin Toggle Button */}
           {isExpanded && (
             <button
               onClick={handleTogglePin}
-              className="hidden md:flex rounded-xl p-2 text-slate-400 hover:bg-white/5 hover:text-white transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#6366F1] focus:outline-none animate-fadeIn"
+              className="hidden md:flex items-center justify-center h-8 w-8 rounded-lg transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus:outline-none animate-fadeIn"
+              style={{
+                color: 'var(--text-secondary)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--bg-card-hover)';
+                e.currentTarget.style.color = 'var(--text-primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = 'var(--text-secondary)';
+              }}
               title={isPinned ? 'Minimize Sidebar' : 'Pin Sidebar Maximized'}
               aria-label={isPinned ? 'Minimize Sidebar' : 'Pin Sidebar Maximized'}
             >
               <svg
-                className={`h-5 w-5 transform transition-transform duration-300 ${!isPinned ? 'rotate-180 text-primary' : ''}`}
+                className={`h-4 w-4 transform transition-transform duration-300 ${!isPinned ? 'rotate-180' : ''}`}
+                style={{ color: !isPinned ? 'var(--primary)' : 'inherit' }}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -181,7 +200,8 @@ const Sidebar = ({ isOpen, onClose }) => {
           {/* Close button (mobile only) */}
           <button
             onClick={onClose}
-            className="ml-auto rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-slate-100 md:hidden focus-visible:ring-2 focus-visible:ring-[#6366F1] focus:outline-none"
+            className="ml-auto rounded-lg p-1.5 transition-colors md:hidden focus-visible:ring-2 focus-visible:ring-primary focus:outline-none"
+            style={{ color: 'var(--text-secondary)' }}
             aria-label="Close menu"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import apiRoutes from './routes/index.js';
+import { logger } from './utils/logger.js';
+import requestLogger from './middleware/requestLogger.js';
 
 // Load environment variables
 dotenv.config();
@@ -69,20 +71,29 @@ app.use((_req, res, next) => {
   next();
 });
 
+// Request Logging Middleware (traces all incoming HTTP requests)
+app.use(requestLogger);
+
 // API Routes
 app.use('/api', apiRoutes);
 
 // Health check
 app.get('/', (_req, res) => {
-  res.json({ status: 'ok', message: 'AI Gym Trainer API is running' });
+  res.json({ status: 'ok', message: 'Gym Companion API is running' });
 });
 
-// Global error handling middleware (production-ready)
-app.use((err, req, res, next) => {
-  console.error('Unhandled Error:', err.message || err);
-  
+// Global error handling middleware (production-ready with Winston stack trace logging)
+app.use((err, req, res, _next) => {
   const statusCode = err.status || err.statusCode || 500;
   const isProd = process.env.NODE_ENV === 'production';
+
+  logger.error(`Unhandled Error: ${err.message || 'Internal Server Error'}`, {
+    status: statusCode,
+    method: req.method,
+    url: req.originalUrl,
+    userId: req.user?.id || 'anonymous',
+    stack: err.stack,
+  });
 
   res.status(statusCode).json({
     success: false,
@@ -91,10 +102,29 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Process-level unhandled exception monitors
+process.on('unhandledRejection', (reason) => {
+  logger.error('Unhandled Promise Rejection', {
+    reason: reason instanceof Error ? reason.message : reason,
+    stack: reason instanceof Error ? reason.stack : undefined,
+  });
+});
+
+process.on('uncaughtException', (err) => {
+  logger.error('Uncaught Exception', {
+    error: err.message,
+    stack: err.stack,
+  });
+});
+
 // Start server (only when not running on Vercel)
 if (!process.env.VERCEL) {
   connectDB();
   app.listen(PORT, () => {
+    logger.info(`Gym Companion server listening on port ${PORT}`, {
+      port: PORT,
+      env: process.env.NODE_ENV || 'development',
+    });
     console.log(`🚀 Server running on http://localhost:${PORT}`);
   });
 }

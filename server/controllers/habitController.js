@@ -1,4 +1,5 @@
 import Habit from '../models/Habit.js';
+import { logger } from '../utils/logger.js';
 
 // Helper to calculate streak in a timezone-safe manner
 const calculateStreak = (completedDates, todayStr) => {
@@ -95,6 +96,11 @@ export const createHabit = async (req, res) => {
       description: description || '',
     });
 
+    logger.info(`Habit created: ${habit.name}`, {
+      habitId: habit._id,
+      userId: req.user.id,
+    });
+
     res.status(201).json({
       success: true,
       habit: {
@@ -107,7 +113,7 @@ export const createHabit = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Create habit error:', error);
+    logger.error('Create habit error:', { error: error.message, stack: error.stack, userId: req.user?.id });
     res.status(500).json({ message: 'Server error creating habit' });
   }
 };
@@ -136,6 +142,11 @@ export const updateHabit = async (req, res) => {
       return res.status(404).json({ message: 'Habit not found or unauthorized' });
     }
 
+    logger.info(`Habit updated: ${habit.name}`, {
+      habitId: habit._id,
+      userId: req.user.id,
+    });
+
     const isCompletedToday = habit.completedDates.includes(todayStr);
     const streak = calculateStreak(habit.completedDates, todayStr);
 
@@ -151,7 +162,7 @@ export const updateHabit = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Update habit error:', error);
+    logger.error('Update habit error:', { error: error.message, stack: error.stack, userId: req.user?.id });
     res.status(500).json({ message: 'Server error updating habit' });
   }
 };
@@ -169,9 +180,14 @@ export const deleteHabit = async (req, res) => {
       return res.status(404).json({ message: 'Habit not found or unauthorized' });
     }
 
+    logger.info(`Habit deleted: ${habit.name || req.params.id}`, {
+      habitId: req.params.id,
+      userId: req.user.id,
+    });
+
     res.status(200).json({ success: true, message: 'Habit deleted successfully' });
   } catch (error) {
-    console.error('Delete habit error:', error);
+    logger.error('Delete habit error:', { error: error.message, stack: error.stack, userId: req.user?.id });
     res.status(500).json({ message: 'Server error deleting habit' });
   }
 };
@@ -197,6 +213,7 @@ export const toggleHabit = async (req, res) => {
     }
 
     const index = habit.completedDates.indexOf(date);
+    const completedNow = index === -1;
     if (index > -1) {
       // Already completed, remove date (mark incomplete)
       habit.completedDates.splice(index, 1);
@@ -206,6 +223,13 @@ export const toggleHabit = async (req, res) => {
     }
 
     await habit.save();
+
+    logger.info(`Habit toggled: ${habit.name} (${completedNow ? 'completed' : 'uncompleted'})`, {
+      habitId: habit._id,
+      date,
+      completed: completedNow,
+      userId: req.user.id,
+    });
 
     const isCompletedToday = habit.completedDates.includes(todayStr);
     const streak = calculateStreak(habit.completedDates, todayStr);
@@ -222,7 +246,7 @@ export const toggleHabit = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Toggle habit error:', error);
+    logger.error('Toggle habit error:', { error: error.message, stack: error.stack, userId: req.user?.id });
     res.status(500).json({ message: 'Server error toggling habit' });
   }
 };
