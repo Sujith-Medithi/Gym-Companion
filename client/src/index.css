@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+@theme {
+  --color-app:        var(--bg-app);
+  --color-surface:    var(--bg-surface);
+  --color-card:       var(--bg-card);
+  --color-card-hover: var(--bg-card-hover);
+  --color-input:      var(--bg-input);
+
+  --color-subtle:  var(--border-subtle);
+  --color-default: var(--border-default);
+  --color-focus:   var(--border-focus);
+
+  --color-primary:       var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
+
+  --color-text-main:  var(--text-primary);
+  --color-text-sub:   var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-danger:  var(--status-danger);
+  --color-info:    var(--status-info);
+}
+
+/* ─── DARK MODE (Default) ───────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-app:        #09090F;
+  --bg-surface:    #0D0D14;
+  --bg-card:       #14141E;
+  --bg-card-hover: #1A1A28;
+  --bg-input:      #1A1A26;
+
+  /* Borders */
+  --border-subtle:  #1A1A28;
+  --border-default: #272735;
+  --border-focus:   #6366F1;
+
+  /* Brand */
+  --primary:        #818CF8;
+  --primary-hover:  #6366F1;
+  --primary-light:  #1E1B4B;
+  --gradient-start: #6366F1;
+  --gradient-end:   #EC4899;
+
+  /* Text */
+  --text-primary:   #F8FAFC;
+  --text-secondary: #A1A1AA;
+  --text-muted:     #71717A;
+
+  /* Semantic status */
+  --status-success: #34D399;
+  --status-warning: #FB923C;
+  --status-danger:  #F87171;
+  --status-info:    #38BDF8;
+
+  /* Spacing / Shape tokens */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  18px;
+  --shadow-card: 0 1px 3px 0 rgba(0,0,0,0.4), 0 1px 2px -1px rgba(0,0,0,0.4);
+  --shadow-lg:   0 4px 16px 0 rgba(0,0,0,0.5);
+
+  /* Typography */
+  --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+}
+
+/* ─── LIGHT MODE ────────────────────────────────────────── */
+[data-theme='light'] {
+  --bg-app:        #F7F8FC;
+  --bg-surface:    #FFFFFF;
+  --bg-card:       #FFFFFF;
+  --bg-card-hover: #F8FAFC;
+  --bg-input:      #FFFFFF;
+
+  --border-subtle:  #F1F5F9;
+  --border-default: #E2E8F0;
+  --border-focus:   #4F46E5;
+
+  --primary:        #4F46E5;
+  --primary-hover:  #4338CA;
+  --primary-light:  #EEF2FF;
+  --gradient-start: #4F46E5;
+  --gradient-end:   #DB2777;
+
+  --text-primary:   #111827;
+  --text-secondary: #64748B;
+  --text-muted:     #94A3B8;
+
+  --status-success: #10B981;
+  --status-warning: #F97316;
+  --status-danger:  #EF4444;
+  --status-info:    #0EA5E9;
+
+  --shadow-card: 0 1px 3px 0 rgba(0,0,0,0.07), 0 1px 2px -1px rgba(0,0,0,0.07);
+  --shadow-lg:   0 4px 16px 0 rgba(0,0,0,0.10);
+}
+
+/* ─── Global Base ───────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Focus ─────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--border-default); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ─── Primary CTA Button — gradient, used SPARINGLY ────── */
+.btn-primary-gradient {
+  background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+  color: #ffffff;
+  font-weight: 600;
+  transition: opacity 160ms ease-out, transform 120ms ease-out;
+}
+.btn-primary-gradient:hover:not(:disabled) { opacity: 0.90; }
+.btn-primary-gradient:active:not(:disabled) { transform: scale(0.98); }
+.btn-primary-gradient:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Progress bar gradient fill */
+.progress-gradient {
+  background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+}
+
+/* ─── Animations ─────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn { animation: fadeIn 180ms ease-out both; }
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-card) 50%, var(--bg-surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* ─── Light Mode overrides for hardcoded Tailwind slate ─── */
+[data-theme='light'] .text-white,
+[data-theme='light'] .text-slate-100,
+[data-theme='light'] .text-slate-200 {
+  color: var(--text-primary) !important;
+}
+[data-theme='light'] .text-slate-300,
+[data-theme='light'] .text-slate-400 {
+  color: var(--text-secondary) !important;
+}
+[data-theme='light'] .text-slate-500 {
+  color: var(--text-muted) !important;
+}
+[data-theme='light'] .bg-\[\#0B0B14\]\/40,
+[data-theme='light'] .bg-\[\#0B0B14\] {
+  background-color: var(--bg-card-hover) !important;
+}
+[data-theme='light'] .border-white\/10,
+[data-theme='light'] .border-white\/5 {
+  border-color: var(--border-default) !important;
+}
+[data-theme='light'] input:not([type='checkbox']):not([type='radio']):not([type='range']),
+[data-theme='light'] textarea,
+[data-theme='light'] select {
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+}
